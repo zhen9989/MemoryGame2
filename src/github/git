@@ -1,63 +1,10 @@
 import Phaser from "phaser";
 
-// Function to generate a random array of a given size and range
-function generateRandomArray(rows, cols, min, max) {
-  const randomArray = [];
-  for (let i = 0; i < rows; i++) {
-    const row = [];
-    for (let j = 0; j < cols; j++) {
-      row.push(0); // Start with all values as 0
-    }
-    randomArray.push(row);
-  }
-
-  // Generate pairs of 1, 2, 3, and 4
-  for (let num = 1; num <= max; num++) {
-    for (let pair = 0; pair < 2; pair++) {
-      const emptyCells = findEmptyCells(randomArray);
-      if (emptyCells.length === 0) {
-        // All cells are filled, break
-        break;
-      }
-      const randomIndex = Math.floor(Math.random() * emptyCells.length);
-      const [x, y] = emptyCells[randomIndex];
-      randomArray[x][y] = num;
-    }
-  }
-
-  // Add a single 0 value randomly
-  const emptyCells = findEmptyCells(randomArray);
-  if (emptyCells.length > 0) {
-    const randomIndex = Math.floor(Math.random() * emptyCells.length);
-    const [x, y] = emptyCells[randomIndex];
-    randomArray[x][y] = 0;
-  }
-
-  return randomArray;
-}
-
-// Function to find empty cells in the array
-function findEmptyCells(array) {
-  const emptyCells = [];
-  for (let i = 0; i < array.length; i++) {
-    for (let j = 0; j < array[i].length; j++) {
-      if (array[i][j] === 0) {
-        emptyCells.push([i, j]);
-      }
-    }
-  }
-  return emptyCells;
-}
-
-// Define the size of the random array
-const numRows = 3;
-const numCols = 3;
-
-// Generate the random array
-const randomArray = generateRandomArray(numRows, numCols, 0, 4);
-
-// Push the random array to the 'level' constant
-const level = randomArray;
+const level = [
+  [1, 0, 3],
+  [2, 4, 1],
+  [3, 4, 2],
+];
 
 export default class MemoryGameScene extends Phaser.Scene {
   constructor() {
@@ -81,7 +28,7 @@ export default class MemoryGameScene extends Phaser.Scene {
   }
 
   preload() {
-    this.load.image("bg", "images/bg2.jpg");
+    this.load.image("bg", "images/bg.jpg");
     this.load.spritesheet("tilesheet", "images/sokoban_tilesheet.png", {
       frameWidth: 64,
     });
@@ -94,7 +41,7 @@ export default class MemoryGameScene extends Phaser.Scene {
   }
 
   create() {
-    this.add.image(this.halfWidth, 20, "bg").setScale(10);
+    this.add.image(this.halfWidth, 20, "bg").setScale(5);
     this.boxGroup = this.physics.add.staticGroup();
     this.createBoxes();
     this.player = this.createPlayer();
@@ -128,6 +75,7 @@ export default class MemoryGameScene extends Phaser.Scene {
       child.setDepth(child.y);
     });
     this.updateActiveBox();
+
     this.timerLabel
       .setStyle({
         fontSize: "80px",
